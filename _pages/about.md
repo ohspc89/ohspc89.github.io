@@ -2,20 +2,37 @@
 layout: about
 title: about
 permalink: /
-subtitle: <i>Per aspera ad astra</i>
+subtitle: <i>Research Data Engineer | Wearable Sensor Systems</i>
 
 profile:
   align: right
   image: jin_pic2.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
-    <p>101C Smith Tower</p>
-    <p>4650 West Sunset Blvd.</p>
-    <p>Los Angeles, CA 90027</p>
+    <p>Los Angeles, CA</p>
 
 news: false # includes a list of news items
-selected_papers: true # includes a list of papers marked as "selected={true}"
+selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
+I design and maintain data pipelines for large-scale wearable sensor data in human movement research.
 
-Originally fascinated by the <a href='https://en.wikipedia.org/wiki/Hard_problem_of_consciousness'>hard problem of consciousness</a>, I pursued a degree in Cognitive Science. My interest later transitioned to the neural control of movement during my Master's program. During my Ph.D., I focused on proprioception - the sense of body position and movement in 3D space. Currently, I work on quantifying infant movements using wearable sensors and have developed a growing passion for data management. The connections between my career stages may not seem immediately apparent, but I will continue to live my life to see how the dots ultimately connect.
+My work bridges domain knowledge in motor control with scalable data engineering practices, including structured ETL workflows, automated quality control systems, and reproducible research infrastructure.
+
+I have developed end-to-end processing systems for infant movement datasets, integrating data validation, incremental QC, and modular processing pipelines in Python and R.
+
+My long-term goal is to build robust, production-grade data systems that enable reliable analysis of complex human behavioral data in both research and applied settings.
+---
+## Selected Projects
+
+### Infant Wearable ETL Pipeline
+Designed a modular processing pipeline for large-scale IMU datasets, including structured ingestion, preprocessing, and feature extraction.
+
+### Incremental QC Automation System
+Implemented a diff-based quality control framework in R with automated reporting and per-coder error tracking.
+
+### HBCD Motion Post-Processing Toolkit
+Developed a reproducible post-processing toolkit for wearable sensor data, containerized with Docker for cross-environment consistency.
+
+### ELAN Behavioral Coding QC Pipeline
+Built an R-based ETL and validation system for structured behavioral annotation files.
