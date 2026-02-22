@@ -10,7 +10,7 @@ email: jinseok.oh@protonmail.ch
 description: >
   Research data engineer building production-grade pipelines and QC automation for wearable sensor and behavioral time-series data.
 footer_text: >
-  (c) Jinseok Oh. Built with Jekyll and al-folio. Hosted on GitHub Pages.
+  Built with Jekyll and al-folio. Hosted on GitHub Pages.
 keywords: data-engineering, research-data-engineering, ETL, quality-control, pipelines, python, R, SQL, docker, wearable-sensors, time-series
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: android-chrome-192x192.png # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
