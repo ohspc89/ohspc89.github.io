@@ -3,7 +3,7 @@ layout: cv
 permalink: /cv/
 title: cv
 nav: true
-nav_order: 5
+nav_order: 2
 cv_pdf: CV_OH_LATEST.pdf
 toc:
   sidebar: left

@@ -4,7 +4,7 @@ title: projects
 permalink: /projects/
 description: Data engineering, QC automation, and wearable-sensor pipeline projects.
 nav: true
-nav_order: 3
+nav_order: 1
 display_categories: [work]
 horizontal: false
 ---

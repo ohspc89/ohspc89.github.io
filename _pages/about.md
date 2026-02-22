@@ -8,8 +8,7 @@ profile:
   align: right
   image: jin_pic2.jpg
   image_circular: true # crops the image to make it circular
-  more_info: >
-    <p>Los Angeles, CA</p>
+  more_info:
 
 news: false # includes a list of news items
 selected_papers: false # includes a list of papers marked as "selected={true}"
@@ -26,11 +25,11 @@ My long-term goal is to build robust, production-grade data systems that enable 
 ---
 ## Selected Projects
 
-### Infant Wearable ETL Pipeline
-Designed a modular processing pipeline for large-scale IMU datasets, including structured ingestion, preprocessing, and feature extraction.
+### HBCD Motion Post-Processing Toolkit
+Developed a reproducible post-processing toolkit for wearable sensor data, containerized with Docker for cross-environment consistency.
 
 ### ELAN Behavioral Coding QC Pipeline
 Built an R-based validation system for structured behavioral annotation files. & Implemented a diff-based quality control framework with automated reporting and per-coder error tracking.
 
-### HBCD Motion Post-Processing Toolkit
-Developed a reproducible post-processing toolkit for wearable sensor data, containerized with Docker for cross-environment consistency.
+### Infant Wearable ETL Pipeline
+Designed a modular processing pipeline for large-scale IMU datasets, including structured ingestion, preprocessing, and feature extraction.

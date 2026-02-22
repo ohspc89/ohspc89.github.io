@@ -1,81 +1,127 @@
 ---
 layout: page
-title: project 2
-description: a project with a background image and giscus comments
+title: Automated Data Quality Checks for Annotation Pipeline (R + Batch)
+description: Diff-based weekly QC with per-coder issue dumps for non-technical users
 img: assets/img/3.jpg
-importance: 2
+importance: 1
 category: work
-giscus_comments: true
 ---
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
+## Overview
 
-To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+In our lab, we annotate infants' reaches to a toy with the goal of analyzing the temporal structure of the behavior. There are more than 500 videos to annotate, so different coders with varying levels of experience work on the task. It is crucial that the quality of annotation is maintained for future analysis. The quality control (QC) for annotation files is performed on a weekly basis.
 
-    ---
-    layout: page
-    title: project
-    description: a project with a background image
-    img: /assets/img/12.jpg
-    ---
+Each annotation file has six columns:
+
+- Tier (= Body part whose movements were annotated)
+- ID of the video annotated
+- (Movement) Onset
+- (Movement) Offset
+- Duration (= Offset - Onset)
+- Movement Category Label
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/ELAN_output.png" title="annotated file" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
-</div>
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    This image can also have a caption. It's like magic.
+    An example annotation of a video.
 </div>
 
-You can also put regular text between your rows of images.
-Say you wanted to write a little bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
+The last offset should be the same for all tiers. Labels should be one of the pre-defined labels, and the offset of previous event should be identical to the onset of the next event.
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
+A naive approach re-checks **every file every week**, which is slow and redundant when most files were already verified the week before.
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+I built an **automated QC pipeline** that supports both:
+- **Weekly incremental QC** (only checks *new or changed* assignments)
+- **Monthly full QC** (runs a complete audit)
 
-{% raw %}
+The system is designed to be usable by **non-technical users** via a **one-click Windows `.bat`** workflow.
 
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-```
+---
 
-{% endraw %}
+## Problem
+
+Weekly QC had three recurring pain points:
+
+1. **Unclear action items**: QC outputs were not easily attributable to individual coders
+2. **Operational friction**: QC required running scripts manually and interpreting logs.
+
+---
+
+## Solution
+
+### 1) Cloud-synced assignment management (Microsoft OneDrive)
+
+QC targets are defined in a shared assignment spreadsheet stored on **Microsoft OneDrive**.
+
+The pipeline reads directly from a cloud-synced directory structure, allowing:
+
+- Centralized file access across multiple lab machines
+- Version-controlled assignment updates via OneDrive sync history
+- Seamless collaboration without manual file transfers
+- Consistent path resolution across users’ environments
+
+To ensure reproducibility, the pipeline normalizes the spreadsheet into a standardized `reference.tsv`, which serves as the canonical input for downstream QC logic.
+
+This design allows the QC workflow to operate reliably in a **cloud-backed research environment** while remaining executable via local scripts.
+
+### 2) Incremental QC via snapshot diff
+
+To avoid re-checking everything, the pipeline maintains a lightweight state:
+
+- `reference_prev.tsv` - snapshot from the previous run
+- `reference_new.tsv` - rows newly added since the previous run (diff)
+
+Weekly QC consumes `reference_new.tsv` when available, falling back to full QC when needed.
+
+### 3) Per-coder "issue dumps" (actionable outputs)
+
+Instead of only providing summary based on annotation error categories, the pipeline produces **per-coder files** containing:
+
+- `failed_log_coded`
+- `offset_with_coder`
+- `labels_with_coder`
+- `continuous_with_coder`
+
+Each QC run writes outputs into a **timestamped folder** (e.g., `qc_by_coder_YYYY-MM-DD_HH:MM`) so results are traceable and never overwritten.
+
+### 4) One-click execution for non-technical users
+
+QC is run via a Windows batch script:
+
+- **Weekly**: incremental by default
+- **Monthly**: full QC trigger (e.g., first Monday logic)
+
+This design minimizes training burden: "double-click and wait for Done."
+
+---
+
+## Results / Impact
+
+- **Reduced runtime** by avoiding full re-scans in weekly cycles
+- **Improved usability**: coders receive exact rows they need to fix
+- **More robust operations**: timestamped outputs + consistent reference state
+- **Less human error**: standardized execution path via `.bat`
+
+---
+
+## Tech Stack
+
+- **R** (tidyverse, fs, stringr) for QC logic and reporting
+- **Microsoft OneDrive (cloud-synced storage)** for collaborative file management
+- **Windows Batch** for one-click automation
+- **Tabular reference ingestion** from a shared spreadsheet source
+- **File-based state** to enable incremental processing
+
+---
+
+## What I’d Improve Next (Production-minded roadmap)
+
+- Add unit tests for key QC rules and edge cases
+- Add run metadata (QC version, input snapshot hash, summary JSON)
+- Optional email/slack notification with links to the output folder
+- Containerized execution for cross-machine reproducibility
+
+---
