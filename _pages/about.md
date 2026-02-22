@@ -22,6 +22,7 @@ My work bridges domain knowledge in motor control with scalable data engineering
 I have developed end-to-end processing systems for infant movement datasets, integrating data validation, incremental QC, and modular processing pipelines in Python and R.
 
 My long-term goal is to build robust, production-grade data systems that enable reliable analysis of complex human behavioral data in both research and applied settings.
+
 ---
 ## Selected Projects
 
