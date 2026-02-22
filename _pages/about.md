@@ -34,6 +34,3 @@ Built an R-based validation system for structured behavioral annotation files. &
 
 ### HBCD Motion Post-Processing Toolkit
 Developed a reproducible post-processing toolkit for wearable sensor data, containerized with Docker for cross-environment consistency.
-
-### ELAN Behavioral Coding QC Pipeline
-Built an R-based ETL and validation system for structured behavioral annotation files.
