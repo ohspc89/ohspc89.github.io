@@ -29,8 +29,8 @@ My long-term goal is to build robust, production-grade data systems that enable 
 ### Infant Wearable ETL Pipeline
 Designed a modular processing pipeline for large-scale IMU datasets, including structured ingestion, preprocessing, and feature extraction.
 
-### Incremental QC Automation System
-Implemented a diff-based quality control framework in R with automated reporting and per-coder error tracking.
+### ELAN Behavioral Coding QC Pipeline
+Built an R-based validation system for structured behavioral annotation files. & Implemented a diff-based quality control framework with automated reporting and per-coder error tracking.
 
 ### HBCD Motion Post-Processing Toolkit
 Developed a reproducible post-processing toolkit for wearable sensor data, containerized with Docker for cross-environment consistency.
