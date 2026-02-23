@@ -1,35 +1,39 @@
 ---
 layout: page
-title: Automated Data Quality Checks for Annotation Pipeline (R + Batch)
+title: ELAN Behavioral Coding QC Pipeline
 description: Diff-based weekly QC with per-coder issue dumps for non-technical users
-img: assets/img/3.jpg
+img: assets/img/project2.png
 importance: 1
 category: work
 ---
 
 ## Overview
 
-In our lab, we annotate infants' reaches to a toy with the goal of analyzing the temporal structure of the behavior. There are more than 500 videos to annotate, so different coders with varying levels of experience work on the task. It is crucial that the quality of annotation is maintained for future analysis. The quality control (QC) for annotation files is performed on a weekly basis.
+In our lab, we annotate infants' reaches to a toy with the goal of analyzing the temporal structure of the behavior. Annotation is done using a software named ELAN (archive.mpi.nl/tla/elan). There are more than 500 videos to annotate, so different coders with varying levels of experience work on the task. It is crucial that the quality of annotation is maintained for future analysis. The quality control (QC) for annotation files is performed on a weekly basis.
 
 Each annotation file has six columns:
 
 - Tier (= Body part whose movements were annotated)
 - ID of the video annotated
-- (Movement) Onset
-- (Movement) Offset
+- (Reach) Onset
+- (Reach) Offset
 - Duration (= Offset - Onset)
 - Movement Category Label
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/ELAN_output.png" title="annotated file" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="/assets/img/ELAN_output.png" title="annotated file" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
     An example annotation of a video.
 </div>
 
-The last offset should be the same for all tiers. Labels should be one of the pre-defined labels, and the offset of previous event should be identical to the onset of the next event.
+### Error Categories
+
+- offset (The last offset should be the same for all tiers)
+- label  (Labels should be one of the pre-defined labels)
+- continuous (The offset of a previous event should be the same as the onset of the next event)
 
 A naive approach re-checks **every file every week**, which is slow and redundant when most files were already verified the week before.
 
@@ -78,12 +82,8 @@ Weekly QC consumes `reference_new.tsv` when available, falling back to full QC w
 
 ### 3) Per-coder "issue dumps" (actionable outputs)
 
-Instead of only providing summary based on annotation error categories, the pipeline produces **per-coder files** containing:
+Instead of only providing summary based on annotation error categories, the pipeline also produces **per-coder files**. Reviewer can easily notify each coder of their errors, without examining line-by-line to associate errors with coders.
 
-- `failed_log_coded`
-- `offset_with_coder`
-- `labels_with_coder`
-- `continuous_with_coder`
 
 Each QC run writes outputs into a **timestamped folder** (e.g., `qc_by_coder_YYYY-MM-DD_HH:MM`) so results are traceable and never overwritten.
 
