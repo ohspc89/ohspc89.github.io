@@ -40,6 +40,10 @@ The following issues need to be addressed before the spreadsheet can be used for
 
 ## Solution: Step-by-step
 
+All files can be located in `https://github.com/ohspc89/reprorehab2025/tree/main/contents/TA_Project/Jin`
+
+The workflow of the solution is as follows: **Parse text entries** -> **Automatically fiil in missing information** -> **Human review** -> **Transform data from wide to long format for further enrichment** -> **Human review** -> **Enrich data using metadata**
+
 #### 1) Prerequisites
 
 - Python >= 3.12.3
@@ -87,6 +91,8 @@ If you're preparing this file for the first time, you can leave both columns bla
 
 ```
 data/
+  final_output/
+  interim/
   reference/
     person_master.csv
     person_alias.csv
@@ -104,7 +110,7 @@ src/
 
 If you're running this script for the first time, open the script using your editor (e.g., Visual Studio) and go to the end of the script. Please replace the current value of the variable `SOURCE` with the new URL of the Google Sheet.
 
-The URL should start with the string: **'https://docs.google.com/spreadsheets/d/'** This is followed by a long alphanumeric spreadsheet ID (e.g., '1reeteJsj4_DjMMyLbgeQQ0_HjLEkHDONV0tHII0Tmwl/'). The trailing portion (e.g., 'edit?gid=0#gid=0') of the URL should be replaced with **'export?format=csv&gid=0'**. See the image below:
+The URL should start with the string: `'https://docs.google.com/spreadsheets/d/'` This is followed by a long alphanumeric spreadsheet ID (e.g., `'1reeteJsj4_DjMMyLbgeQQ0_HjLEkHDONV0tHII0Tmwl/'`). The trailing portion (e.g., `'edit?gid=0#gid=0'`) of the URL should be replaced with `'export?format=csv&gid=0'`. See the image below:
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -141,6 +147,8 @@ After the code runs, **interim/post_parse** will be created under **/data**. Two
  - `review_reason`     : Reasons for reviewing parse_status
  - `Attendee_(%d)`     : Columns labeled for later wide to long transformation
 
+*etl_parse_workblocks.log* is also saved in **/src/log**. The log records the number of rows requiring review. Rows are categorized by specific reasons for review and counted accordingly for user inspection.
+
 #### 4) Run `src/ETL/autocorrect.py`
 
 Missing timezones can be corrected automatically using metadata from *person_master.csv*.
@@ -148,6 +156,8 @@ Missing timezones can be corrected automatically using metadata from *person_mas
 **Output**
 
 After the code runs, *Timezone_corrected.csv* will be saved inside **interim/post_parse**.
+
+*autocorrect.log* is also saved in **/src/log**. The log records the similarity between `host` and `First_name` in *person_master.csv, calculated using the RapidFuzz module. If the calculated score is greater than 75, the missing timezone of the host will be filled with the timezone of the matched candidate.
 
 #### 5) Review and update the corrected fields
 
@@ -169,6 +179,8 @@ After the code runs, *host_ensured_long.csv* will be saved inside **interim/post
  - `host_match_key`    : Key to be matched with `match_value` in *person_alias.csv* using `match_key`
  - `attendee_match_key`: Key to be matched with `match_value` in *person_alias.csv* using `match_key`
  - `time_inferred_ampm`: Boolean value reporting if am/pm was inferred
+
+*etl_enrich_workblocks_pt1.log* is also saved in **/src/log**. The log records the number of rows at each transformation stages of the script.
 
 #### 7) Review *person_alias.csv*
 
@@ -209,6 +221,8 @@ After the code runs, *workblock_attendance_enriched.csv* will be saved inside **
  - `attendee_pod`           : Pod assignment for the attendee
  - `attendee_role`          : Role ('TA' vs. 'Learner')
  - `is_host`                : Boolean value indicating whether the attendee row corresponds to the host
+
+*etl_enrich_workblocks_pt2.log* is also saved in **/src/log**. Sometimes hosts put down their names differently as attendees, and that part is corrected ('Host-only sessions misspecified:').
 
 ---
 
